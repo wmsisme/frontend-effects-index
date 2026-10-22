@@ -100,70 +100,75 @@ h1 em{font-style:italic;color:var(--accent);-webkit-text-fill-color:var(--accent
   grid-template-columns:repeat(auto-fill,minmax(304px,1fr));
 }
 .card{
-  position:relative;aspect-ratio:4/3;perspective:1400px;cursor:pointer;
-  animation:cardIn .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:calc(var(--i) * 42ms);
-  outline:none;
-}
-@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
-.card .flip{
-  position:absolute;inset:0;transform-style:preserve-3d;
-  transition:transform .78s cubic-bezier(.62,.02,.28,1);
-  border-radius:13px;
-}
-.card.flipped .flip{transform:rotateY(180deg)}
-.card.hide{display:none}
-.face{
-  position:absolute;inset:0;border-radius:13px;overflow:hidden;
-  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  position:relative;aspect-ratio:4/3;cursor:pointer;outline:none;
+  display:flex;flex-direction:column;border-radius:13px;overflow:hidden;
   border:1px solid var(--line);background:var(--ink-2);
   box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 18px 40px -28px rgba(0,0,0,.9);
-  transition:border-color .3s, box-shadow .3s;
+  transition:border-color .3s, box-shadow .3s, transform .35s cubic-bezier(.2,.7,.3,1);
+  animation:cardIn .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:calc(var(--i) * 42ms);
 }
-.card:hover .face{border-color:var(--line-2)}
-.card:hover .front{box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 26px 60px -30px rgba(0,0,0,1)}
-.card:focus-visible .front{border-color:var(--accent)}
-
-/* 正面 */
-.front{display:flex;flex-direction:column}
-.stage{position:relative;flex:1;overflow:hidden;background:#0f0d0b;pointer-events:none}
-.front .bar{
+@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+.card:hover{
+  border-color:var(--line-2);transform:translateY(-3px);
+  box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 30px 60px -30px rgba(0,0,0,1);
+}
+.card:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px rgba(217,119,74,.35)}
+.card.hide{display:none}
+.card .stage{position:relative;flex:1;overflow:hidden;background:#0f0d0b}
+.card .bar{
   height:38px;flex:0 0 38px;display:flex;align-items:center;gap:10px;padding:0 14px;
   border-top:1px solid var(--line);background:var(--ink-2);
   font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--paper-faint);
 }
-.front .bar .no{color:var(--paper-dim)}
-.front .bar .cat{color:var(--accent);opacity:.85}
-.front .bar .hint{margin-left:auto;color:rgba(239,232,221,.52);transition:.25s;letter-spacing:.08em}
-.card:hover .front .bar .hint{color:var(--accent)}
+.card .bar .no{color:var(--paper-dim)}
+.card .bar .cat{color:var(--accent);opacity:.85}
+.card .bar .hint{margin-left:auto;color:rgba(239,232,221,.52);transition:.25s;letter-spacing:.08em}
+.card:hover .bar .hint{color:var(--accent)}
 
-/* 背面 */
-.back{
-  transform:rotateY(180deg);padding:22px 22px 18px;display:flex;flex-direction:column;
-  background:linear-gradient(165deg,#181510,var(--ink-2) 60%);
+/* 详情浮层 */
+.modal{
+  position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:26px;
+  background:rgba(8,7,6,.82);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  opacity:0;pointer-events:none;transition:opacity .24s;
 }
-.back .bno{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--paper-faint)}
-.back h3{
-  font-family:var(--serif);font-weight:400;font-size:clamp(24px,2.4vw,31px);line-height:1.15;
-  margin:8px 0 2px;letter-spacing:.01em;color:#fffaf1;
+.modal.on{opacity:1;pointer-events:auto}
+.modal .box{
+  width:min(860px,100%);max-height:86vh;display:flex;flex-direction:column;
+  background:#131110;border:1px solid var(--line-2);border-radius:12px;overflow:hidden;
+  transform:translateY(12px) scale(.99);transition:transform .3s cubic-bezier(.2,.7,.3,1);
+  box-shadow:0 40px 90px -40px rgba(0,0,0,1);
 }
-.back .en{
-  font-family:var(--mono);font-size:11px;letter-spacing:.09em;color:var(--accent);
-  text-transform:uppercase;margin-bottom:12px;
+.modal.on .box{transform:none}
+.modal .mh{display:flex;align-items:flex-start;gap:14px;padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+.modal .mh .ti{flex:1;min-width:0}
+.modal .mh h4{font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.15;color:#fffaf1}
+.modal .mh .en2{display:block;margin-top:5px;font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:var(--accent);text-transform:uppercase}
+.modal .close{background:transparent;border:0;color:var(--paper-dim);font-size:24px;line-height:1;cursor:pointer;padding:0 3px;transition:.2s}
+.modal .close:hover{color:var(--paper)}
+.modal .mbody{display:flex;flex-direction:column;overflow:auto;padding:0 20px}
+.modal .mdesc{font-size:13px;line-height:1.72;color:rgba(239,232,221,.78);padding:15px 0 0}
+.modal .maka{
+  font-family:var(--mono);font-size:10.5px;line-height:1.6;color:rgba(239,232,221,.45);
+  padding:10px 0 15px;border-bottom:1px solid var(--line);
 }
-.back p{font-size:12.8px;line-height:1.65;color:rgba(239,232,221,.74);flex:1;overflow:auto;padding-right:4px}
-.back .ghost{
-  position:absolute;right:12px;bottom:6px;font-family:var(--serif);font-size:76px;line-height:1;
-  color:rgba(239,232,221,.045);pointer-events:none;user-select:none;letter-spacing:-.02em;
+.modal .mbtns{display:flex;gap:8px;padding:14px 0;flex-wrap:wrap}
+.modal .mbtns button{
+  font:inherit;font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--paper-dim);
+  background:transparent;border:1px solid var(--line);border-radius:6px;padding:8px 14px;cursor:pointer;transition:.22s;
 }
-.back p::-webkit-scrollbar{width:4px}
-.back p::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
-.back .copy{
-  margin-top:12px;align-self:flex-start;font:inherit;font-family:var(--mono);font-size:11px;
-  letter-spacing:.06em;color:var(--paper-dim);background:transparent;border:1px solid var(--line);
-  border-radius:6px;padding:7px 13px;cursor:pointer;transition:.22s;
+.modal .mbtns button:hover{color:var(--ink);background:var(--paper);border-color:var(--paper)}
+.modal .mbtns button.main{color:var(--accent);border-color:rgba(217,119,74,.42)}
+.modal .mbtns button.main:hover{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+.modal pre{
+  margin:0 0 16px;padding:16px 18px;background:#0b0a09;border:1px solid var(--line);
+  border-radius:8px;overflow:auto;max-height:46vh;
 }
-.back .copy:hover{color:var(--ink);background:var(--paper);border-color:var(--paper)}
-.back .copy.done{color:var(--accent-2);border-color:var(--accent-2)}
+.modal code{font-family:var(--mono);font-size:12px;line-height:1.75;color:#d3cab9;white-space:pre;display:block}
+.modal .mf{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:10px 20px;border-top:1px solid var(--line);
+}
+.modal .mf .hintr{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--paper-faint)}
 
 /* 空状态 */
 .empty{display:none;padding:80px 0;text-align:center;color:var(--paper-faint);font-family:var(--serif);font-size:20px;letter-spacing:.04em}
@@ -407,7 +412,7 @@ footer{
     <h1>前端效果<em>图鉴</em></h1>
     <p class="lede">
       <span class="zh">看见效果，知道名字，才说得清。</span><br>
-      点开任意一张卡片，揭晓它的名字，以及<strong>一句能直接说给 AI 听的话</strong>。下次想复刻某个效果，不必再描述“那种亮亮的、会飘的东西”。
+      点开任意一张卡片：它的中文名、英文名、几个俗名，<strong>一句能直接说给 AI 听的话</strong>，和一段能照抄的代码。下次想复刻某个效果，不必再描述“那种亮亮的、会飘的东西”。
     </p>
   </header>
 
@@ -415,9 +420,9 @@ footer{
     <div class="filters" id="filters"></div>
     <div class="search">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
-      <input id="q" type="search" placeholder="搜索：玻璃 / 霓虹 / 按钮…" autocomplete="off">
+      <input id="q" type="search" placeholder="搜索：玻璃 / 手电筒 / 便当盒…" autocomplete="off">
     </div>
-    <button class="reveal-all" id="revealAll">全部揭晓</button>
+    <button class="reveal-all" id="revealAll">随便看一个</button>
   </div>
 
   <main class="grid" id="grid"></main>
@@ -427,6 +432,31 @@ footer{
     <span>Frontend Effects Index · 单文件离线页面</span>
     <span id="count">017 effects</span>
   </footer>
+</div>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="box" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="mh">
+      <div class="ti">
+        <h4 id="mTitle"></h4>
+        <span class="en2" id="mEn"></span>
+      </div>
+      <button class="close" id="mClose" aria-label="关闭">×</button>
+    </div>
+    <div class="mbody">
+      <p class="mdesc" id="mDesc"></p>
+      <div class="maka" id="mAka"></div>
+      <div class="mbtns">
+        <button class="main" id="mCopySay">复制「怎么跟 AI 说」</button>
+        <button id="mCopyCode">复制代码</button>
+      </div>
+      <pre><code id="mCode"></code></pre>
+    </div>
+    <div class="mf">
+      <span class="hintr">Esc 或点空白处关闭</span>
+      <span class="hintr" id="mNo"></span>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -539,6 +569,260 @@ const EFFECTS = [
  keys:'赛博 网格 透视 地面 复古未来 落日 线框 科技 cyberpunk'}
 ];
 
+/* ---------------- 别名（专业名之外的俗名，也参与搜索） ---------------- */
+const AKA = {
+  glass:   ['磨砂玻璃','毛玻璃','半透明卡片','玻璃质感','通透卡片'],
+  neu:     ['拟物','软UI','硅胶按钮','凹凸按钮','按压块','立体阴影'],
+  neon:    ['发光字','灯管字','荧光','发光边框','赛博夜店','霓虹灯'],
+  grain:   ['噪点','胶片颗粒','纸质感','粗糙纹理','颗粒感','旧照片感'],
+  chrome:  ['金属光泽','铬','镭射','银色','反光','水银'],
+  magnet:  ['跟随鼠标的按钮','会吸过去的按钮','磁性按钮','吸附','位移'],
+  spot:    ['手电筒','聚光灯','光斑跟随','鼠标光效','探照灯'],
+  type:    ['一个字一个字出来','打字','终端打字','光标闪烁','逐字显示'],
+  steps:   ['抽帧','一顿一顿','像素感','掉帧','老动画','卡顿感'],
+  skel:    ['加载占位','灰块','加载中','占位图','骨架加载'],
+  gtext:   ['彩色字','彩虹字','渐变标题','文字渐变','变色字'],
+  outline: ['空心字','描边字','轮廓字','线稿字','钢印感'],
+  stagger: ['文字一个个出现','依次入场','错开动画','标题动效','逐字浮现'],
+  bento:   ['便当盒','网格拼贴','大小不一卡片','卡片墙','拼图布局'],
+  overlap: ['叠字','图文重叠','错位排版','海报感','混合模式'],
+  aurora:  ['光斑背景','彩色光雾','氛围背景','渐变光斑','极光色'],
+  cyber:   ['透视网格','复古未来','80年代','霓虹地面','赛博朋克','迈阿密']
+};
+
+/* ---------------- 代码示例（照抄可用） ---------------- */
+const CODE = {
+glass: `/* 关键：面板后面得有彩色背景，模糊才有东西可糊 */
+.pane{
+  background: rgba(255,255,255,.11);
+  border: 1px solid rgba(255,255,255,.34);
+  border-radius: 14px;
+  -webkit-backdrop-filter: blur(13px) saturate(150%);
+  backdrop-filter: blur(13px) saturate(150%);
+  box-shadow: 0 14px 34px rgba(0,0,0,.42),
+              inset 0 1px 0 rgba(255,255,255,.45);
+}`,
+
+neu: `.n{
+  background: #e7e4dd;                /* 与底色同色 */
+  border-radius: 18px;
+  box-shadow: 7px 7px 14px #c3c0b9,   /* 右下暗 */
+             -7px -7px 14px #fff;     /* 左上亮 */
+}
+/* 按下去：把外阴影换成内阴影 */
+.n.pressed{
+  box-shadow: inset 6px 6px 12px #c3c0b9,
+              inset -6px -6px 12px #fff;
+}`,
+
+neon: `.txt{
+  color: #eafcff;
+  text-shadow: 0 0 8px  #38e8ff,
+               0 0 24px #38e8ff,
+               0 0 46px #1c8fa8;   /* 近处锐利、远处扩散 */
+}
+.halo{
+  border: 1.5px solid #38e8ff;
+  box-shadow: 0 0 18px rgba(56,232,255,.55),
+              inset 0 0 22px rgba(56,232,255,.20);
+  animation: neonPulse 3.2s ease-in-out infinite;
+}
+@keyframes neonPulse{ 48%,52%{ opacity:.72 } }`,
+
+grain: `/* feTurbulence 生成一张噪点图，再用混合模式叠上去 */
+.grain::after{
+  content:"";
+  position:absolute; inset:-50%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: .85;
+  mix-blend-mode: overlay;
+  filter: contrast(165%);            /* 不加强几乎看不见 */
+  animation: grainShift 1.6s steps(4) infinite;
+}
+@keyframes grainShift{
+  25%{ transform: translate(-3%,2%) }
+  75%{ transform: translate(-2%,-2%) }
+}`,
+
+chrome: `.ring{
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    #6a6862, #fffdf6, #3a3936, #cfcbc2,
+    #fffdf6, #4a4944, #8b8880, #fffdf6, #6a6862);
+  box-shadow: 0 0 30px rgba(255,250,240,.18),
+              inset 0 0 18px rgba(0,0,0,.55);
+  animation: spin 7s linear infinite;
+}
+@keyframes spin{ to{ transform: rotate(360deg) } }`,
+
+magnet: `const btn = document.querySelector('.m');
+const box = btn.parentElement;
+
+box.addEventListener('mousemove', e => {
+  const r  = box.getBoundingClientRect();
+  const ax = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
+  const ay = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
+  btn.style.transform =
+    'translate(' + (ax * 16) + 'px,' + (ay * 16) + 'px)';
+});
+box.addEventListener('mouseleave', () => {
+  btn.style.transform = '';
+});
+
+/* CSS */
+.m{ transition: transform .12s ease-out; }`,
+
+spot: `// 把鼠标位置写进 CSS 变量
+card.addEventListener('mousemove', e => {
+  const r = card.getBoundingClientRect();
+  card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+  card.style.setProperty('--my', (e.clientY - r.top)  + 'px');
+});
+
+/* CSS */
+.light{
+  position: absolute; inset: 0;
+  background: radial-gradient(220px circle at var(--mx) var(--my),
+              rgba(255,206,150,.30), transparent 68%);
+}`,
+
+type: `.txt{
+  display: inline-block;
+  overflow: hidden; white-space: nowrap; width: 0;
+  animation: typing 6s steps(15) infinite;   /* 15 个字 */
+}
+.cursor{
+  width: 8px; height: 16px; background: #d9774a;
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes typing{
+  0%,4%   { width: 0 }
+  58%,84% { width: 15ch }    /* 停留 */
+  96%,100%{ width: 0 }       /* 清空重打 */
+}
+@keyframes blink{ 50%{ opacity: 0 } }`,
+
+steps: `.sq{
+  position: absolute; left: 0;
+  animation: hop 2.4s steps(8) infinite;   /* 8 帧，不插值 */
+}
+@keyframes hop{
+  50%{ left: calc(100% - 26px); transform: translateY(-22px) }
+}`,
+
+skel: `.r{
+  background: #2e2822; border-radius: 3px;
+  position: relative; overflow: hidden;
+}
+.r::after{
+  content:""; position: absolute; inset: 0;
+  background: linear-gradient(100deg,
+              transparent 20%, rgba(255,255,255,.13) 48%, transparent 76%);
+  transform: translateX(-100%);
+  animation: shimmer 1.9s infinite;
+}
+@keyframes shimmer{ to{ transform: translateX(100%) } }`,
+
+gtext: `.t{
+  background: linear-gradient(92deg,
+    #ff8a5c, #ffd76e 28%, #7de2a8 52%, #63b8ff 74%, #c78dff);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  animation: hue 9s linear infinite;    /* 可选：颜色缓慢流转 */
+}
+@keyframes hue{ to{ filter: hue-rotate(360deg) } }`,
+
+outline: `.o{
+  -webkit-text-stroke: 1.2px rgba(239,232,221,.42);
+  color: transparent;
+}
+.f{                                      /* 叠在上层的实心字 */
+  color: #d9774a;
+  clip-path: inset(100% 0 0 0);
+  animation: fillUp 4s ease-in-out infinite;
+}
+@keyframes fillUp{
+  0%,12%  { clip-path: inset(100% 0 0 0) }
+  46%,80% { clip-path: inset(0 0 0 0) }   /* 从下往上灌满 */
+  100%    { clip-path: inset(100% 0 0 0) }
+}`,
+
+stagger: `<!-- <h2 class="w"><span>逐</span><span>字</span><span>入</span><span>场</span></h2> -->
+.w span{
+  display: inline-block;
+  opacity: 0;
+  animation: rise 2.8s ease infinite;
+}
+.w span:nth-child(1){ animation-delay: .05s }
+.w span:nth-child(2){ animation-delay: .16s }
+.w span:nth-child(3){ animation-delay: .27s }
+.w span:nth-child(4){ animation-delay: .38s }
+/* 每字 +0.11s */
+@keyframes rise{
+  0%  { opacity:0; transform: translateY(14px) rotate(3deg) }
+  14% { opacity:1; transform: none }
+}`,
+
+bento: `<!-- <div class="bento"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div> -->
+.bento{
+  display: grid;
+  gap: 7px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+.bento i:nth-child(1){ grid-column: span 2; grid-row: span 2; }  /* 主块 */
+.bento i:nth-child(4){ grid-column: span 2; }
+.bento i:nth-child(6){ grid-row: span 2; }
+.bento i:nth-child(7){ grid-column: span 2; }`,
+
+overlap: `.blk{
+  position: absolute;
+  width: 64%; height: 56%;
+  background: #cf6b40;
+  mix-blend-mode: multiply;      /* 与底图相乘，交叠处变暗 */
+  transform: rotate(-4deg);
+}
+.tx{
+  position: relative;
+  font-size: 52px; line-height: .94;
+  color: #fff6e9;
+  text-shadow: 0 3px 22px rgba(0,0,0,.45);
+}
+.tx span:nth-child(2){
+  margin-left: 34px;
+  color: rgba(255,246,233,.62);
+  font-style: italic;
+}`,
+
+aurora: `.a{
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(34px);
+  opacity: .75;
+}
+.a1{ background:#1f8f6a; animation: drift1 9s  ease-in-out infinite alternate }
+.a2{ background:#6a3fc0; animation: drift2 11s ease-in-out infinite alternate }
+.a3{ background:#c14f6b; animation: drift1 13s ease-in-out infinite alternate-reverse }
+@keyframes drift1{ to{ transform: translate(40px,26px) scale(1.15) } }
+@keyframes drift2{ to{ transform: translate(-34px,-20px) scale(.9) } }`,
+
+cyber: `.scene{ perspective: 340px; overflow: hidden; }
+.floor{
+  position: absolute; inset: auto -60% -20%;
+  height: 80%;
+  background-image:
+    linear-gradient(rgba(255,110,190,.72) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,110,190,.72) 1px, transparent 1px);
+  background-size: 34px 34px;
+  transform: rotateX(66deg);
+  transform-origin: bottom center;
+  animation: flow 2.4s linear infinite;
+  mask-image: linear-gradient(transparent, #000 55%);
+}
+@keyframes flow{ to{ background-position: 0 34px, 0 0 } }`
+};
+
 /* ---------------- render ---------------- */
 const grid = document.getElementById('grid');
 const filtersEl = document.getElementById('filters');
@@ -548,20 +832,12 @@ const CATS = ['全部','质感','动效','文字','布局','背景'];
 
 grid.innerHTML = EFFECTS.map((e,i)=>`
   <article class="card" data-cat="${e.cat}" data-id="${e.id}" tabindex="0" role="button"
-           aria-label="效果 ${e.no}，点击揭晓名称" style="--i:${i}">
-    <div class="flip">
-      <div class="face front">
-        <div class="stage">${e.demo}</div>
-        <div class="bar"><span class="no">#${e.no}</span><span class="cat">${e.cat}</span><span class="hint">点击揭晓 →</span></div>
-      </div>
-      <div class="face back">
-        <div class="bno">#${e.no} · ${e.cat}</div>
-        <h3>${e.name}</h3>
-        <div class="en">${e.en}</div>
-        <p>${e.desc}</p>
-        <button class="copy" data-id="${e.id}">复制「怎么跟 AI 说」</button>
-        <span class="ghost">${e.no}</span>
-      </div>
+           aria-label="效果 ${e.no}，点击查看名称" style="--i:${i}">
+    <div class="stage">${e.demo}</div>
+    <div class="bar">
+      <span class="no">#${e.no}</span>
+      <span class="cat">${e.cat}</span>
+      <span class="hint">揭晓名称 →</span>
     </div>
   </article>`).join('');
 
@@ -577,7 +853,7 @@ function applyFilter(){
   let shown=0;
   [...grid.children].forEach(card=>{
     const e = EFFECTS.find(x=>x.id===card.dataset.id);
-    const hay = [e.name,e.en,e.desc,e.keys,e.cat].join(' ').toLowerCase();
+    const hay = [e.name,e.en,e.desc,e.keys,e.cat, AKA[e.id].join(' ')].join(' ').toLowerCase();
     const okCat = curCat==='全部' || e.cat===curCat;
     const okQ = !curQ || hay.includes(curQ);
     const show = okCat && okQ;
@@ -605,27 +881,15 @@ document.getElementById('q').addEventListener('input', ev=>{
   applyFilter();
 });
 
-/* 翻牌 */
+/* 点卡片 → 打开详情 */
 grid.addEventListener('click', ev=>{
-  const copyBtn = ev.target.closest('.copy');
-  if(copyBtn){
-    ev.stopPropagation();
-    const e = EFFECTS.find(x=>x.id===copyBtn.dataset.id);
-    const text = `${e.name}（${e.en.split(' / ')[0]}）：${e.say}`;
-    copy(text).then(ok=>{
-      copyBtn.textContent = ok ? '已复制 ✓' : '复制失败，手动选吧';
-      copyBtn.classList.toggle('done', ok);
-      setTimeout(()=>{ copyBtn.textContent='复制「怎么跟 AI 说」'; copyBtn.classList.remove('done'); }, 1800);
-    });
-    return;
-  }
   const card = ev.target.closest('.card');
-  if(card) card.classList.toggle('flipped');
+  if(card) openDetail(card.dataset.id);
 });
 grid.addEventListener('keydown', ev=>{
   if(ev.key!=='Enter' && ev.key!==' ') return;
   const card = ev.target.closest('.card');
-  if(card){ ev.preventDefault(); card.classList.toggle('flipped'); }
+  if(card){ ev.preventDefault(); openDetail(card.dataset.id); }
 });
 
 /* 鼠标坐标 → CSS 变量（磁吸 / 聚光） */
@@ -641,14 +905,12 @@ grid.addEventListener('mousemove', ev=>{
   stage.style.setProperty('--ay', ay.toFixed(3));
 });
 
-/* 全部揭晓 */
+/* 随便看一个 */
 const revealAll = document.getElementById('revealAll');
-let allOn = false;
 revealAll.addEventListener('click', ()=>{
-  allOn = !allOn;
-  [...grid.children].forEach(c=>c.classList.toggle('flipped', allOn));
-  revealAll.textContent = allOn ? '全部合上' : '全部揭晓';
-  revealAll.classList.toggle('is-on', allOn);
+  const vis = [...grid.children].filter(c=>!c.classList.contains('hide'));
+  if(!vis.length) return;
+  openDetail(vis[Math.floor(Math.random()*vis.length)].dataset.id);
 });
 
 /* Bento 循环高亮 */
@@ -682,6 +944,54 @@ async function copy(text){
   }catch(e){}
   return false;
 }
+
+/* ---------------- 详情浮层 ---------------- */
+const modal   = document.getElementById('modal');
+const mTitle  = document.getElementById('mTitle');
+const mEn     = document.getElementById('mEn');
+const mDesc   = document.getElementById('mDesc');
+const mAka    = document.getElementById('mAka');
+const mCode   = document.getElementById('mCode');
+const mNo     = document.getElementById('mNo');
+const mCopySay  = document.getElementById('mCopySay');
+const mCopyCode = document.getElementById('mCopyCode');
+let codeId = null;
+
+function openDetail(id){
+  const e = EFFECTS.find(x=>x.id===id);
+  if(!e) return;
+  codeId = id;
+  mTitle.textContent = e.name;
+  mEn.textContent = e.en;
+  mDesc.textContent = e.desc;
+  mAka.textContent = '也叫：' + AKA[id].join(' · ');
+  mCode.textContent = CODE[id] || '';
+  mNo.textContent = '#' + e.no + ' · ' + e.cat;
+  modal.querySelector('.mbody').scrollTop = 0;
+  modal.classList.add('on');
+  modal.setAttribute('aria-hidden','false');
+}
+function closeDetail(){
+  modal.classList.remove('on');
+  modal.setAttribute('aria-hidden','true');
+}
+document.getElementById('mClose').addEventListener('click', closeDetail);
+modal.addEventListener('click', ev=>{ if(ev.target === modal) closeDetail(); });
+document.addEventListener('keydown', ev=>{ if(ev.key === 'Escape') closeDetail(); });
+
+mCopySay.addEventListener('click', async ev=>{
+  ev.stopPropagation();
+  const e = EFFECTS.find(x=>x.id===codeId);
+  const ok = await copy(`${e.name}（${e.en.split(' / ')[0]}）：${e.say}`);
+  mCopySay.textContent = ok ? '已复制 ✓' : '复制失败';
+  setTimeout(()=>{ mCopySay.textContent = '复制「怎么跟 AI 说」'; }, 1600);
+});
+mCopyCode.addEventListener('click', async ev=>{
+  ev.stopPropagation();
+  const ok = await copy(CODE[codeId]);
+  mCopyCode.textContent = ok ? '已复制 ✓' : '复制失败';
+  setTimeout(()=>{ mCopyCode.textContent = '复制代码'; }, 1600);
+});
 
 applyFilter();
 </script>
