@@ -216,8 +216,8 @@ footer{
 .d-grain{overflow:hidden;background:linear-gradient(150deg,#243544,#4d3652 55%,#74483a)}
 .d-grain::after{
   content:"";position:absolute;inset:-50%;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.52' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity:.7;mix-blend-mode:overlay;animation:grainShift 1.6s steps(4) infinite;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.85;mix-blend-mode:overlay;filter:contrast(165%);animation:grainShift 1.6s steps(4) infinite;
 }
 @keyframes grainShift{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-2%)}100%{transform:translate(0,0)}}
 .d-grain .lbl{position:absolute;left:20px;bottom:18px;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:rgba(255,255,255,.75)}
